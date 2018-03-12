@@ -5,32 +5,15 @@ import SearchResults from "../SearchResults/SearchResults";
 import Playlist from "../Playlist/Playlist";
 import Spotify from "../../util/Spotify";
 
-const playlist = [{
-    id: 0,
-    name: 'Land of Time',
-    artist: 'Excision',
-    album: '2017 Lost Land Mix'
-}];
 
-const results = [{
-    id: 0,
-    name: 'Land of Time',
-    artist: 'Excision',
-    album: '2017 Lost Land Mix'
-},{
-    id: 1,
-    name: 'Pursuit of Happiness',
-    artist: 'Kid Cudi',
-    album: 'Man on the Moon'
-}];
 
 class App extends Component {
     constructor(props){
         super(props);
         this.state = {
-            playlistName: 'Playlist 1',
-            playlistTracks: playlist,
-            searchResults: results
+            playlistName: 'New Playlist',
+            playlistTracks: [],
+            searchResults: []
         };
         this.addTrack = this.addTrack.bind(this);
         this.removeTrack = this.removeTrack.bind(this);
@@ -64,6 +47,13 @@ class App extends Component {
     }
     savePlaylist(){
         const trackURIs = this.state.playlistTracks.map(track => track.uri);
+        Spotify.savePlaylist(this.state.playlistName, trackURIs).then(() =>{
+            this.setState({
+                playlistName: 'New Playlist',
+                playlistTracks: [],
+                searchResults: []
+            });
+        });
     }
     search(searchTerm){
         Spotify.search(searchTerm).then(
@@ -81,7 +71,7 @@ class App extends Component {
           <div className="App-playlist">
               <SearchResults searchResults={this.state.searchResults}
                              onAdd={this.addTrack}/>
-              <Playlist playListName={this.state.playlistName}
+              <Playlist playlistName={this.state.playlistName}
                         playlistTracks={this.state.playlistTracks}
                         onRemove={this.removeTrack}
                         onNameChange={this.updatePlaylistName}
